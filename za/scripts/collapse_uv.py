@@ -1,9 +1,15 @@
 #! /usr/bin/env python
-import aipy as a, numpy, sys, os
+import aipy as a, numpy, sys, os, optparse
+
+o = optparse.OptionParser()
+o.add_option('-n', '--nint', dest='nintegrations', type='int', default=10,
+    help='The number of integrations to add up from a uvfile.')
+
+opts,args = o.parse_args(sys.argv[1:])
 
 aa = a.phs.ArrayLocation(('+37:55.1', '-122:09.4')) # Leuschner Obs.
 
-nint2int = 10### this i the number of integrations to integrate together in the uv file.
+nint2int = opts.nintegrations### this i the number of integrations to integrate together in the uv file.
 UV_VAR_TYPES = {
     'source':   'a', 'operator': 'a', 'version':  'a', 'telescop': 'a',
     'antpos':   'd', 'freq':     'd', 'inttime':  'r', 'nants':    'i',
@@ -61,6 +67,8 @@ for filename in sys.argv[1:]:
     for num in uvi.all():
         c +=1
     numint = c
+    if c%nint2int !=0:
+        print 'WARNING: Last %i integrations in input file will not be included in output file. '%(c%nint2int)
     uvi.rewind()
     #create dictionary to hold integrated data and number of integrations.
     sums = {}
