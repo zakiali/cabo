@@ -36,7 +36,7 @@ for filename in sys.argv[1:]:
         #    uvo['lst'] = uvo['ra'] = uvo['obsra'] = aa.sidereal_time()
         #    curtime = t
         #_t = t_base + (t - start_t)
-        f[0:404] = 1
+        f[0:405] = 1
         f[479:1024] = 1
         #f[:273] = 1
         #f[288:304] = 1
