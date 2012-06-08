@@ -35,7 +35,14 @@ prms = {
         1: [  5.0955,  23.5051, 0.000] , 
         2: [-32.8130,  26.8984, 0.000] , 
         3: [ -6.2206,  26.8984, 0.000] 
-}
+        },
+    'delays': { 
+        0: 0.0000, 
+        1: 4.0000,
+        2: 20.0000,
+        3: 10.0000
+        },
+    'offsets':{}
 }
 
 def get_aa(freqs):
@@ -44,7 +51,9 @@ def get_aa(freqs):
     beam = a.fit.Beam(freqs)
     for i in range (len(prms['antpos'])):
         pos = prms['antpos'][i]
-        antennas.append(a.fit.Antenna(pos[0], pos[1], pos[2], beam, amp=.05))
+        dly = prms['delays'].get(i, 0.)
+        off = prms['offsets'].get(i, 0.)
+        antennas.append(a.fit.Antenna(pos[0], pos[1], pos[2], beam, phsoff = [dly,off],amp=.05,lat=prms['loc'][0]))
     aa = AntennaArray(prms['loc'], antennas)
     aa.set_params(prms)
     return aa
