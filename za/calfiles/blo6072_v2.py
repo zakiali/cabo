@@ -15,7 +15,7 @@ class AntennaArray(a.fit.AntennaArray):
                     elif val == 'top_z': prms[k]['top_z'] = top_pos[2]
         return prms
 
-    def set_params(self, prms):
+    def set_params(self, prms, rotate=0, axis=n.array([0,0,1])):
         changed = a.fit.AntennaArray.set_params(self, prms)
         for i, ant in enumerate(self):
             ant_changed = False
@@ -32,7 +32,9 @@ class AntennaArray(a.fit.AntennaArray):
                 top_pos[2] = prms[str(i)]['top_z']
                 ant_changed = True
             except(KeyError): pass
-            if ant_changed: ant.pos = n.dot(n.linalg.inv(self._eq2zen), top_pos)
+            if ant_changed: 
+                rot_top = n.dot(a.coord.rot_m(rotate*n.pi/180,axis),top_pos)
+                ant.pos = n.dot(n.linalg.inv(self._eq2zen), rot_top)
             changed |= ant_changed
         return changed
    
@@ -79,7 +81,7 @@ def get_aa(freqs):
         off = prms['offsets'].get(i, 0.)
         antennas.append(a.fit.Antenna(0, 0, 0, beam, phsoff = [dly,off],amp=.05,lat=prms['loc'][0]))
     aa = AntennaArray(location, antennas)
-    aa.set_params(aa_prms)
+    aa.set_params(aa_prms,rotate=18.0)
     return aa
 
 src_prms = {
